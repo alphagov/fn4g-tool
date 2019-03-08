@@ -1,0 +1,18 @@
+Index,Question Group,,Q Ref,Category,Question,Answer Options
+1,,1,,,Email security summary,
+2,,2,,,Results from Mail check:,
+3,,,tls.hasSuccess,Measure,Does the organisation/domain have TLS 1.2 available?,Yes/No
+4,,,tls.errorCount,Measure,Number of urgent issues reported regarding TLS,Numeric
+5,,,tls.warningCount,Measure,Number of advisory issues reported regarding TLS,Numeric
+6,,,dmarc.rejectSet,Measure,Does the organisation/domain have a p=reject or p=quarantine DMARC record?,Yes/No
+7,,,dmarc.errorCount,Measure,Number of urgent issues reported regarding DMARC,Numeric
+8,,,dmarc.warningCount,Measure,Number of advisory issues reported regarding DMARC,Numeric
+9,,,spf.errorCount,Measure,Number of urgent issues reported regarding SPF,Numeric
+10,,,spf.warningCount,Measure,Number of advisory issues reported regarding SPF,Numeric
+11,,,dkim.errorCount,Measure,Number of urgent issues reported regarding DKIM,Numeric
+12,,,dkim.warningCount,Measure,Number of advisory issues reported regarding DKIM,Numeric
+13,,1,,,Vulnerability scanning summary,
+14,,2,,,Results obtained from the vulnerability scanners:,
+15,,,vuln.highCount,Measure,Number of high severity issues reported,Numeric
+16,,,vuln.mediumCount,Measure,Number of medium severity issues reported,Numeric
+17,,,vuln.lowCount,Measure,Number of low severity issues reported,Numeric

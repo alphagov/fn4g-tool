@@ -1,0 +1,36 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <a href="/assessments" class="govuk-back-link">Back</a>
+    <h1 class="govuk-heading-xl"><%= @assessment_type.name %></h1>
+      <ol class="app-task-list">
+      <% @assessment_type.questionsets.each do |questionset| %>
+          <li>
+            <h2 class="app-task-list__section"><%= questionset.name %></h2>
+            <ul class="app-task-list__items">
+              <% questionset.sections.each do |section| %>
+              <li class="app-task-list__item">
+                <%= link_to section.name, edit_section_path(section), class: "app-task-list__task-name" %>
+                <%
+                  question_count = section.questions.count
+                  answer_count = 0
+                  section.questions.each { |question| answer_count += question.answers.count }
+
+                  if question_count == answer_count
+                %>
+                  <strong class="govuk-tag app-task-list__task-completed">Completed</strong>
+                <% else %>
+                  <%= answer_count.to_s %> / <%= question_count.to_s %>
+                <% end %>
+              </li>
+              <% end %>
+            </ul>
+          </li>
+      <% end %>
+      </ol>
+    <% unless @assessment.blank? %>
+      <%= form_tag assessment_path(@assessment), :method => :put do %>
+        <%= submit_tag('Load data from tools', :class => "govuk-button") %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

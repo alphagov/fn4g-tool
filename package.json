@@ -1,0 +1,8 @@
+{
+  "name": "assessment-tool",
+  "private": true,
+  "dependencies": {
+    "govuk-frontend": "^2.5.1",
+    "html5shiv": "^3.7.3"
+  }
+}

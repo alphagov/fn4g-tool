@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  db:
+    image: "postgres:11"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    image: ${DOCKER_REGISTRY}/fn4g-tool:latest
+    links:
+      - db
+    ports:
+      - "8181:3000"
+    depends_on:
+      - 'db'

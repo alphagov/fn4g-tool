@@ -1,0 +1,61 @@
+<h1 class="govuk-heading-xl"><%= @section.name %></h1>
+<h2 class="govuk-heading-l"><%= @section.description %></h2>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_tag section_path(@section), :method => :put do %>
+      <% @section.questions.each do |question| %>
+        <input type="hidden" name="answers[<%= question.id %>][question_id]" value="<%= question.id %>">
+        <input type="hidden" name="answers[<%= question.id %>][assessment_id]" value="<%= @assessment.id %>">
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+              <h3 class="govuk-heading-m">
+                <%= question.question %>
+              </h3>
+            </legend>
+            <% if question.question_type.name == 'Binomial' %>
+              <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="question-<%= question.id %>-yes" name="answers[<%= question.id %>][binomial_option_id]" type="radio" value="1" <%= check_answer(@answers, question.id, :binomial_option_id, 1) %>>
+                  <label class="govuk-label govuk-radios__label" for="question-<%= question.id %>-yes">
+                    Yes
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="question-<%= question.id %>-no" name="answers[<%= question.id %>][binomial_option_id]" type="radio" value="2" <%= check_answer(@answers, question.id, :binomial_option_id, 2) %>>
+                  <label class="govuk-label govuk-radios__label" for="question-<%= question.id %>-no">
+                    No
+                  </label>
+                </div>
+              </div>
+            <% elsif question.question_type.name == 'Trinomial' %>
+              <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="question-<%= question.id %>-yes" name="answers[<%= question.id %>][trinomial_option_id]" type="radio" value="1" <%= check_answer(@answers, question.id, :trinomial_option_id, 1) %>>
+                  <label class="govuk-label govuk-radios__label" for="question-<%= question.id %>-yes">
+                    Yes
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="question-<%= question.id %>-no" name="answers[<%= question.id %>][trinomial_option_id]" type="radio" value="2" <%= check_answer(@answers, question.id, :trinomial_option_id, 2) %>>
+                  <label class="govuk-label govuk-radios__label" for="question-<%= question.id %>-no">
+                    No
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="question-<%= question.id %>-dontknow" name="answers[<%= question.id %>][trinomial_option_id]" type="radio" value="3" <%= check_answer(@answers, question.id, :trinomial_option_id, 3) %>>
+                  <label class="govuk-label govuk-radios__label" for="question-<%= question.id %>-dontknow">
+                    Don't know
+                  </label>
+                </div>
+              </div>
+            <% elsif question.question_type.name == 'Numeric' %>
+              <input type="text" class="govuk-input" name="answers[<%= question.id %>][numerical]" value="<%= get_answer(@answers, question.id, :numerical).to_i %>">
+            <% end %>
+          </fieldset>
+        </div>
+      <% end %>
+      <%= submit_tag('Confirm & save', :class => "govuk-button") %>
+    <% end %>
+  </div>
+</div>

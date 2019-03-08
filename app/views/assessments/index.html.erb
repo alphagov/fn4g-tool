@@ -1,0 +1,59 @@
+<h1 class="govuk-heading-l">Assessments</h1>
+<table class="govuk-table">
+  <thead class="govuk-table__head">
+  <tr class="govuk-table__row">
+    <th class="govuk-table__header govuk-!-width-one-half"><%= sort_link "name" %></th>
+    <th class="govuk-table__header"><%= sort_link "created_at", "Created at" %></th>
+    <th class="govuk-table__header"><%= sort_link "completed", "Completed" %></th>
+    <th class="govuk-table__header"><%= sort_link "created_at", "Completed at" %></th>
+  </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+  <% if @assessments.blank? %>
+    <tr class="govuk-table__row">
+      <td class="govuk-table__cell" scope="row" colspan="5">
+        No assessments found for your organisation.
+      </td>
+    </tr>
+  <% else %>
+    <% @assessments.each do |assessment| %>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell govuk-!-width-one-half" scope="row">
+          <%= link_to assessment.assessment_type.name, edit_assessment_path(assessment), class: "govuk-link" %>
+        </td>
+        <td class="govuk-table__cell" scope="row">
+          <%= assessment.created_at.strftime('%e %b %Y') %>
+        </td>
+        <td class="govuk-table__cell" scope="row">
+          <% if assessment.completed? %>
+            Yes
+          <% else %>
+            No
+          <% end %>
+        </td>
+        <td class="govuk-table__cell" scope="row">
+          <% if assessment.completed? %>
+            <%= assessment.completed_at.strftime('%e %b %Y') %>
+          <% else %>
+            -
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% @assessments.each do |assessment| %>
+  <% question_count = 0
+     assessment.assessment_type.questionsets.each do |qs|
+       qs.sections.each do |section|
+          question_count += section.questions.count
+       end
+     end
+     answer_count = assessment.answers.count
+  %>
+    <%= pie_chart({ "Answered" => answer_count, "Blank" => question_count - answer_count }) %>
+    <%= pie_chart(@vulnerabilities) %>
+      <%= bar_chart(@vulnerabilities) %>
+  <% end %>
+  <% end %>
+  </tbody>
+</table>
+<%= button_to 'New assessment', new_assessment_path, method: :get, class: "govuk-button" %>
