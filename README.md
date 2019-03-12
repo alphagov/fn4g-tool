@@ -1,24 +1,26 @@
-# README
+# FN4G Tool
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Purpose
 
-Things you may want to cover:
+This tool provides a questionnaire to evaluate an organisation's alignment to security standards, with a view to
+help standards adoption.
 
-* Ruby version
+## Requirements
 
-* System dependencies
+The application is bundled in a Docker image, only [Docker-Compose](https://docs.docker.com/compose/install/)
+is required to run it locally.
 
-* Configuration
+## How to install and use
 
-* Database creation
+To start up the application locally, execute:
 
-* Database initialization
+```shell
+make serve
+```
 
-* How to run the test suite
+Other useful Makefile targets are:
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- `make build` - builds the docker image without starting the application
+- `make bash` - run a shell in the docker composed application
+- `make stop` - stop the application
+- `make db` - start up the database container
