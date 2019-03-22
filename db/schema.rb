@@ -59,6 +59,29 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["name"], name: "countries_name_key", unique: true
   end
 
+  create_table "framework_compliances", id: :serial, force: :cascade do |t|
+    t.integer "question_id", null: false
+    t.integer "framework_id", null: false
+    t.datetime "created_at", default: -> { "now()" }, null: false
+    t.datetime "updated_at", default: -> { "now()" }, null: false
+  end
+
+  create_table "frameworks", id: :serial, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", default: -> { "now()" }, null: false
+    t.datetime "updated_at", default: -> { "now()" }, null: false
+    t.index ["name"], name: "frameworks_name_key", unique: true
+  end
+
+  create_table "mappings", id: :serial, force: :cascade do |t|
+    t.string "name"
+    t.integer "weight", default: 0
+    t.integer "question_id", null: false
+    t.integer "framework_id", null: false
+    t.datetime "created_at", default: -> { "now()" }, null: false
+    t.datetime "updated_at", default: -> { "now()" }, null: false
+  end
+
   create_table "organisations", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.integer "country_id", null: false
@@ -89,6 +112,9 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "question_type_id", null: false
     t.integer "index"
     t.string "reference"
+    t.string "mcss_reference"
+    t.string "guidance"
+    t.boolean "visible", default: true
     t.datetime "created_at", default: -> { "now()" }, null: false
     t.datetime "updated_at", default: -> { "now()" }, null: false
     t.index ["question", "section_id"], name: "question_section_unique_index", unique: true
@@ -119,7 +145,9 @@ ActiveRecord::Schema.define(version: 0) do
   create_table "sections", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "description"
+    t.string "guidance"
     t.integer "questionset_id", null: false
+    t.boolean "compliance", default: false
     t.datetime "created_at", default: -> { "now()" }, null: false
     t.datetime "updated_at", default: -> { "now()" }, null: false
     t.index ["name"], name: "sections_name_key", unique: true
@@ -170,6 +198,10 @@ ActiveRecord::Schema.define(version: 0) do
   add_foreign_key "assessments", "assessment_types", name: "assessment_type_id_fkey"
   add_foreign_key "assessments", "organisations", name: "assessment_organisation_id_fkey"
   add_foreign_key "assessments", "users", name: "assessment_user_id_fkey"
+  add_foreign_key "framework_compliances", "frameworks", name: "mapping_framework_id_fkey"
+  add_foreign_key "framework_compliances", "questions", name: "mapping_question_id_fkey"
+  add_foreign_key "mappings", "frameworks", name: "mapping_framework_id_fkey"
+  add_foreign_key "mappings", "questions", name: "mapping_question_id_fkey"
   add_foreign_key "organisations", "countries", name: "organisations_country_id_fkey"
   add_foreign_key "organisations", "regions", name: "organisations_region_id_fkey"
   add_foreign_key "questions", "question_categories", name: "question_category_id_fkey"

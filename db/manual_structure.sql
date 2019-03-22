@@ -106,7 +106,9 @@ CREATE TABLE sections
     id serial PRIMARY KEY,
     name VARCHAR UNIQUE NOT NULL,
     description VARCHAR DEFAULT NULL,
+    guidance VARCHAR DEFAULT NULL,
     questionset_id integer NOT NULL,
+    compliance BOOLEAN DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT section_questionset_id_fkey FOREIGN KEY (questionset_id)
@@ -139,6 +141,9 @@ CREATE TABLE questions
     question_type_id integer NOT NULL,
     index integer DEFAULT NULL,
     reference VARCHAR DEFAULT NULL,
+    mcss_reference VARCHAR DEFAULT NULL,
+    guidance VARCHAR DEFAULT NULL,
+    visible BOOLEAN DEFAULT true,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT question_section_unique_index UNIQUE (question, section_id),
@@ -167,6 +172,46 @@ CREATE TABLE binomial_options
     name VARCHAR UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE frameworks
+(
+    id serial PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE framework_compliances
+(
+    id serial PRIMARY KEY,
+    question_id integer NOT NULL,
+    framework_id integer NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT mapping_question_id_fkey FOREIGN KEY (question_id)
+        REFERENCES questions(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT mapping_framework_id_fkey FOREIGN KEY (framework_id)
+        REFERENCES frameworks(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE mappings
+(
+    id serial PRIMARY KEY,
+    name VARCHAR DEFAULT NULL,
+    weight integer DEFAULT 0,
+    question_id integer NOT NULL,
+    framework_id integer NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT mapping_question_id_fkey FOREIGN KEY (question_id)
+        REFERENCES questions(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT mapping_framework_id_fkey FOREIGN KEY (framework_id)
+        REFERENCES frameworks(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 CREATE TABLE assessments

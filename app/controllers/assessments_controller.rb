@@ -10,8 +10,16 @@ class AssessmentsController < ApplicationController
   end
 
   def new
-    @organisation = Organisation.find(1)
+    @user = User.find(1)
+    @organisation = @user.organisation
     @assessment_type = AssessmentType.find(1)
+    @assessment = Assessment.create!(
+        assessment_type_id: @assessment_type.id,
+        organisation_id: @organisation.id,
+        user_id: @user.id
+    )
+    @main_section = Section.find_by_name('Organisation compliance')
+    redirect_to '/assessments/' + @assessment.id.to_s + '/sections/' + @main_section.id.to_s + '/edit'
   end
 
   def edit
@@ -24,8 +32,6 @@ class AssessmentsController < ApplicationController
                    .where(assessment_id: @assessment.id).first
       @vulnerabilities[reference.second] = answer.numerical.to_i unless answer.blank?
     end
-
-    render 'new'
   end
 
   def update
@@ -35,15 +41,19 @@ class AssessmentsController < ApplicationController
     @questionset = Questionset.where(assessment_type_id: @assessment_type.id).where(name: 'Automated metrics')
     #save_openvas_answers(@assessment, @questionset, load_openvas_data('AWS Test'))
     save_mailcheck_answers(@assessment)
-    render 'new'
+    redirect_to '/assessments/' + @assessment.id.to_s + '/edit'
   end
 
   def openvas
     render :plain => load_openvas_data('AWS Test').inspect
   end
 
-  private
+  def summary
+    @assessment = Assessment.find(params[:id])
 
+  end
+
+  private
 
   def save_openvas_answers(assessment, questionset, results)
     i = 0

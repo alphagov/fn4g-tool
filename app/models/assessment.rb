@@ -8,5 +8,14 @@ class Assessment < ActiveRecord::Base
     where(:organisation_id => organisation_id).order("#{sort_column} #{sort_direction}").all
   end
 
+  def self.question_count
+    sum = 0
+    self.assessment_type.questionsets.each do |questionset|
+      questionset.sections.each do |section|
+        sum += section.questions.where(visible: true).count
+      end
+    end
+    sum
+  end
 
 end

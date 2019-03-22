@@ -1,13 +1,11 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 
 build:
-	$(MAKE) stop
 	$(DOCKER_COMPOSE) build
 db:
 	$(DOCKER_COMPOSE) up -d db
 
-serve: build
-	$(MAKE) db
+serve: stop build db
 	$(DOCKER_COMPOSE) run --rm app rm -f tmp/pids/server.pid
 	$(DOCKER_COMPOSE) run --rm app ./bin/rails db:create db:schema:load db:seed
 	$(DOCKER_COMPOSE) run --rm app cp -R --remove-destination /usr/src/.node_modules ./node_modules

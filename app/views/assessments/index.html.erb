@@ -22,7 +22,7 @@
           <%= link_to assessment.assessment_type.name, edit_assessment_path(assessment), class: "govuk-link" %>
         </td>
         <td class="govuk-table__cell" scope="row">
-          <%= assessment.created_at.strftime('%e %b %Y') %>
+          <%= assessment.created_at.strftime('%e %b %Y %H:%M') %>
         </td>
         <td class="govuk-table__cell" scope="row">
           <% if assessment.completed? %>
@@ -49,9 +49,11 @@
      end
      answer_count = assessment.answers.count
   %>
+<!--
     <%= pie_chart({ "Answered" => answer_count, "Blank" => question_count - answer_count }) %>
     <%= pie_chart(@vulnerabilities) %>
       <%= bar_chart(@vulnerabilities) %>
+-->
   <% end %>
   <% end %>
   </tbody>

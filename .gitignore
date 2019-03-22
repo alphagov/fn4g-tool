@@ -12,6 +12,7 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+variables.sh
 
 # Ignore uploaded files in development
 /storage/*

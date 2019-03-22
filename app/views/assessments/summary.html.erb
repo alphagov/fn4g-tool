@@ -1,0 +1,94 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <a href="<%= edit_assessment_url(@assessment) %>" class="govuk-back-link">Back</a>
+    <h1 class="govuk-heading-xl"><%= @assessment.assessment_type.name %> Summary</h1>
+    <ol class="app-task-list">
+      <% @assessment.assessment_type.questionsets.each do |questionset| %>
+        <li>
+          <h2 class="app-task-list__section"><%= questionset.name %></h2>
+          <% unless 'Compliance frameworks' == questionset.name %>
+            <%
+              question_count = questionset.question_count
+              answer_count = questionset.questions_answered_with(@assessment.id, 1)
+            %>
+            <%= answer_count.to_s %> / <%= question_count.to_s %>
+          <% end %>
+          <ul class="app-task-list__items">
+            <% questionset.sections.each do |section| %>
+              <li class="app-task-list__item">
+                <% if section.compliance? %>
+                  <% compliance_questions = section.questions_answered_with(@assessment.id, 1) %>
+                  <% if compliance_questions.blank? %>
+                    You said you do not comply with any frameworks.
+                  <% else %>
+                    You answered "Yes" to the following compliance questions:
+                    <ul>
+                    <% compliance_questions.each do |compliance_question| %>
+                      <li><%= compliance_question.question %></li>
+                    <% end %>
+                    </ul>
+                  <% end %>
+                <% else %>
+                  <h3 class="govuk-heading-m"><%= section.name %></h3>
+                  <%
+                    question_count = section.questions.count
+                    answer_count = section.questions_answered_with(@assessment.id, 1).count
+                  %>
+                    <%= answer_count.to_s %> / <%= question_count.to_s %>
+                  <p><%= section.guidance %></p>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ol>
+    <h1 class="govuk-heading-xl"><%= @assessment.assessment_type.name %> Detailed guidance</h1>
+    <ol class="app-task-list">
+      <% @assessment.assessment_type.questionsets.each do |questionset| %>
+        <li>
+          <% unless 'Compliance frameworks' == questionset.name %>
+            <h2 class="app-task-list__section"><%= questionset.name %></h2>
+            <%
+              question_count = questionset.question_count
+              answer_count = questionset.questions_answered_with(@assessment.id, 1)
+            %>
+            <%= answer_count.to_s %> / <%= question_count.to_s %>
+          <% end %>
+          <ul class="app-task-list__items">
+            <% questionset.sections.where(compliance: false).each do |section| %>
+              <li class="app-task-list__item">
+                <% unless section.compliance? %>
+                  <h3 class="govuk-heading-m"><%= section.name %></h3>
+                  <%
+                    question_count = section.questions.count
+                    answer_count = section.questions_answered_with(@assessment.id, 1).count
+                  %>
+                  <%= answer_count.to_s %> / <%= question_count.to_s %>
+                  <% if answer_count == question_count %>
+                    Well done!
+                  <% else %>
+                    <h4 class="govuk-heading-s">You answered "No" or "Don't know" to the following questions:</h4>
+                    <ul>
+                      <% section.questions_not_answered_with(@assessment.id, 1).each do |question| %>
+                        <li>
+                          <h4 class="govuk-heading-s"><%= question.question %></h4>
+                          <p><%= question.guidance %></p>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ol>
+    <% unless @assessment.blank? %>
+      <%= form_tag edit_assessment_path(@assessment), :method => :get do %>
+        <%= submit_tag('Back', :class => "govuk-button") %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

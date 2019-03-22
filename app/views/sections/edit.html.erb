@@ -2,7 +2,7 @@
 <h2 class="govuk-heading-l"><%= @section.description %></h2>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= form_tag section_path(@section), :method => :put do %>
+    <%= form_tag assessment_section_path(@assessment, @section), :method => :put do %>
       <% @section.questions.each do |question| %>
         <input type="hidden" name="answers[<%= question.id %>][question_id]" value="<%= question.id %>">
         <input type="hidden" name="answers[<%= question.id %>][assessment_id]" value="<%= @assessment.id %>">

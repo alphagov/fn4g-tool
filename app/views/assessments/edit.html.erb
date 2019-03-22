@@ -9,13 +9,15 @@
             <ul class="app-task-list__items">
               <% questionset.sections.each do |section| %>
               <li class="app-task-list__item">
-                <%= link_to section.name, edit_section_path(section), class: "app-task-list__task-name" %>
+                <%= link_to section.name, edit_assessment_section_path(@assessment, section), class: "app-task-list__task-name" %>
                 <%
                   question_count = section.questions.count
                   answer_count = 0
-                  section.questions.each { |question| answer_count += question.answers.count }
+                  section.questions.each { |question|
+                    answer_count += question.answers.where(:assessment_id => @assessment.id).count
+                  }
 
-                  if question_count == answer_count
+                  if question_count <= answer_count
                 %>
                   <strong class="govuk-tag app-task-list__task-completed">Completed</strong>
                 <% else %>
@@ -28,8 +30,12 @@
       <% end %>
       </ol>
     <% unless @assessment.blank? %>
+
       <%= form_tag assessment_path(@assessment), :method => :put do %>
         <%= submit_tag('Load data from tools', :class => "govuk-button") %>
+      <% end %>
+      <%= form_tag assessment_summary_path(@assessment), :method => :get do %>
+        <%= submit_tag('Summary', :class => "govuk-button") %>
       <% end %>
     <% end %>
   </div>

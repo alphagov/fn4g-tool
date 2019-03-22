@@ -35,110 +35,169 @@ end
   BinomialOption.create!(name: option)
 end
 
-assessmentType = AssessmentType.create!(name: 'Comprehensive security assessment')
+weight = 0
+mapping_weight = {}
+['No', 'Not specific', 'Partial', 'Yes'].each do |option|
+  mapping_weight[option.downcase] = weight
+  weight += 1
+end
+
+frameworks = []
+['ISO 27001', 'Cyber Essentials', '10 STCS', 'CIS 20', 'PSN'].each do |option|
+  frameworks << Framework.create!(name: option)
+end
 
 
-questionset1 = Questionset.create!(name: 'Compliance frameworks',
-                                   assessment_type_id: assessmentType.id)
+assessmentType = AssessmentType.create!(name: 'Security assessment')
+
+
+compliance_qs = Questionset.create!(name: 'Compliance frameworks',
+                                    assessment_type_id: assessmentType.id)
 
 section = nil
 CSV.foreach('./db/MQ_Compliance.csv') do |row|
   if row[2] == '1'
-    section = Section.create!(name: row[5], questionset_id: questionset1.id)
+    section = Section.create!(
+        name: row[7],
+        questionset_id: compliance_qs.id,
+        guidance: row[8],
+        compliance: true
+    )
   end
   if row[2] != '1' && row[0] != 'Index' && !section.nil?
     if row[2] == '2'
-      section.description = row[5].to_s
+      section.description = row[7].to_s
       section.save!
     else
       category = QuestionCategory.find_by_name(row[4])
       if category.nil?
         category = QuestionCategory.create!(name: row[4])
       end
-      type = if row[6] == 'Yes/No'
+      type = if row[9] == 'Yes/No'
                QuestionType.find_by_name('Binomial')
-             elsif row[6] == 'Numeric'
+             elsif row[9] == 'Numeric'
                QuestionType.find_by_name('Numeric')
              else
                QuestionType.find_by_name('Trinomial')
              end
-      section.questions.create!(
-          question: row[5],
+      question = Question.create!(
+          question: row[7],
           section_id: section.id,
           question_category_id: category.id,
           question_type_id: type.id,
           index: (row[0].to_i * 10),
-          reference: row[3]
+          reference: row[3],
+          mcss_reference: row[6],
+          guidance: row[8]
       )
+
+      [
+          ['PSN Compliant','PSN'],
+          ['Cyber Essentials Certified','Cyber Essentials'],
+          ['ISO 27001 Compliant','ISO 27001']
+      ].each do |framework_map|
+        if framework_map[0].downcase == row[7].to_s.strip.downcase
+          framework = Framework.find_by_name(framework_map[1])
+          FrameworkCompliance.create!(question_id: question.id, framework_id: framework.id)
+        end
+      end
     end
   end
 end
 
-
-questionset2 = Questionset.create!(name: 'Assessment questions',
-                                  assessment_type_id: assessmentType.id)
+mapping_questionsets = {}
+['Identify', 'Protect', 'Detect', 'Respond', 'Recover'].each do |option|
+  mapping_questionsets[option] = Questionset.create!(name: option,
+                                                     assessment_type_id: assessmentType.id)
+end
 
 section = nil
 CSV.foreach('./db/MQ_Mapping.csv') do |row|
   if row[2] == '1'
-    section = Section.create!(name: row[5], questionset_id: questionset2.id)
+    questionset = mapping_questionsets[row[5]]
+    section = Section.create!(
+        name: row[7],
+        questionset_id: questionset.id,
+        guidance: row[8]
+    )
   end
   if row[2] != '1' && row[0] != 'Index' && !section.nil?
     if row[2] == '2'
-      section.description = row[5].to_s
+      section.description = row[7].to_s
       section.save!
     else
       category = QuestionCategory.find_by_name(row[4])
       if category.nil?
         category = QuestionCategory.create!(name: row[4])
       end
-      type = if row[6] == 'Yes/No'
-        QuestionType.find_by_name('Binomial')
-      else
-        QuestionType.find_by_name('Trinomial')
-      end
-      section.questions.create!(
-        question: row[5],
-        section_id: section.id,
-        question_category_id: category.id,
-        question_type_id: type.id,
-        index: (row[0].to_i * 10),
-        reference: row[3]
+      type = if row[9] == 'Yes/No'
+               QuestionType.find_by_name('Binomial')
+             elsif row[9] == 'Numeric'
+               QuestionType.find_by_name('Numeric')
+             else
+               QuestionType.find_by_name('Trinomial')
+             end
+      question = Question.create!(
+          question: row[7],
+          section_id: section.id,
+          question_category_id: category.id,
+          question_type_id: type.id,
+          index: (row[0].to_i * 10),
+          reference: row[3],
+          mcss_reference: row[6],
+          guidance: row[8]
       )
+      column = 10
+      frameworks.each do |framework|
+        Mapping.create!(
+            question_id: question.id,
+            framework_id: framework.id,
+            name: row[column].strip,
+            weight: mapping_weight[row[column].strip.downcase]
+        )
+        column += 1
+      end
+
     end
   end
 end
 
-questionset3 = Questionset.create!(name: 'Automated metrics',
+tools_qs = Questionset.create!(name: 'Automated metrics',
                                    assessment_type_id: assessmentType.id)
 section = nil
 CSV.foreach('./db/MQ_Tools.csv') do |row|
   if row[2] == '1'
-    section = Section.create!(name: row[5], questionset_id: questionset3.id)
+    section = Section.create!(
+        name: row[7],
+        questionset_id: tools_qs.id,
+        guidance: row[8]
+    )
   end
   if row[2] != '1' && row[0] != 'Index' && !section.nil?
     if row[2] == '2'
-      section.description = row[5].to_s
+      section.description = row[7].to_s
       section.save!
     else
       category = QuestionCategory.find_by_name(row[4])
       if category.nil?
         category = QuestionCategory.create!(name: row[4])
       end
-      type = if row[6] == 'Yes/No'
+      type = if row[8] == 'Yes/No'
                QuestionType.find_by_name('Binomial')
-             elsif row[6] == 'Numeric'
+             elsif row[8] == 'Numeric'
                QuestionType.find_by_name('Numeric')
              else
                QuestionType.find_by_name('Trinomial')
              end
       section.questions.create!(
-          question: row[5],
+          question: row[7],
           section_id: section.id,
           question_category_id: category.id,
           question_type_id: type.id,
           index: (row[0].to_i * 10),
-          reference: row[3]
+          reference: row[3],
+          mcss_reference: row[6],
+          guidance: row[8]
       )
     end
   end

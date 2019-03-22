@@ -1,19 +1,11 @@
-Index,Question Group,,Q Ref,Category,Question,Answer Options
-1,,1,,,Organisation compliance,
-2,,2,,,Select all that apply,
-3,,,,Compliance,PSN Compliant,Yes/No
-4,,,,Compliance,MCSS,Yes/No
-5,,,,Compliance,Cyber Essentials Certified,Yes/No
-6,,,,Compliance,GDPR Compliant,Yes/No
-7,,,,Compliance,ISO 27001 Compliant,Yes/No
-8,,,,Compliance,DWP MOU Signed,Yes/No
-9,,,,Compliance,NHS NIS,Yes/No
-10,,,,Compliance,Other,Yes/No
-11,,1,,,3rd Party Compliance,
-12,,2,,,Select all that apply,
-13,,,,Compliance,PSN Compliant,Yes/No
-14,,,,Compliance,MCSS,Yes/No
-15,,,,Compliance,Cyber Essentials Certified,Yes/No
-16,,,,Compliance,GDPR Compliant,Yes/No
-17,,,,Compliance,ISO 27001 Compliant,Yes/No
-18,,,,Compliance,Not known,Yes/No
+Index,Question Group,,Q Ref,Category,MCSS Category,MCSS Q,Question,Guidance,Answer Options
+1,,1,,Section header,,,Organisation compliance,,
+2,,2,,,,,Select all that apply,,
+3,,,,Compliance,,,PSN Compliant,,Yes/No
+4,,,,Compliance,,,MCSS,,Yes/No
+5,,,,Compliance,,,Cyber Essentials Certified,,Yes/No
+6,,,,Compliance,,,GDPR Compliant,,Yes/No
+7,,,,Compliance,,,ISO 27001 Compliant,,Yes/No
+8,,,,Compliance,,,DWP MOU Signed,,Yes/No
+9,,,,Compliance,,,NHS NIS,,Yes/No
+10,,,,Compliance,,,Other,,Yes/No
